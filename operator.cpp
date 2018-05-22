@@ -1,91 +1,101 @@
 #include <iostream>
+#include <vector>
+#include <stdexcept>
+#include <string.h>
+///you should prevent exceptions from leaving destructors
 
-#include<vector>
-
-using namespace std;
-
-class myType
+class Widget
 {
 public:
-    myType()
+    Widget():
+    id(0), size(0), data(NULL)
     {
+    
+    }
+    Widget(int val)
+    {
+        id = val;
+        size = id+1;
+        data = new int [size];
+    }
+    Widget(const Widget &rhs) //deep copy 
+    {
+        id = rhs.id;
+        size = rhs.size;
+        data = new int[size];
+        memcpy(data, rhs.data, sizeof(int)*size);
+    }
+    friend void swap(Widget & lhs, Widget &rhs)
+    {
+        using std::swap;
+        std::cout<<"swap, id:" << lhs.id<<std::endl;
+        swap(lhs.id, rhs.id);
+        swap(lhs.size, rhs.size);
+        swap(lhs.data, rhs.data);
+        std::cout<<"swap, id:" << lhs.id<<std::endl;
 
-
     }
-    ~myType()
+    /*
+    Widget & operator = (Widget rhs) //pass by value, however, ``data'' will free twice
     {
-        if(data.size())
-        {
-           data.clear();
-        }
-    }
-    void setData(int * src, int size)
-    {
-        if(data.size())
-        {
-           data.clear();
-        }
-        for(int i = 0; i < size; ++i)
-        {
-            data.push_back(src[i]);
-        }
-    }
-    void printData()
-    {
-        if(!data.size())
-        {
-            return;
-        }
-        for(int i = 0; i < data.size(); ++i)
-        {
-            cout<<" " << data[i];
-        }
-        cout<<endl;
-    }
-    int  operator [] (size_t pos)
-    {
-        if(pos > size())
-        {
-            return -1;
-        }
-        return data[pos];
-    }
-
-    myType & operator+(myType & rhs)
-    {
-        for(int i = 0; i < rhs.size(); ++i)
-        {
-            data.push_back(rhs[i]);
-        }
+        swap(*this, rhs);
         return *this;
     }
-
-    size_t size() const
+    */
+    Widget& operator= (const Widget &rhs) //deep copy, ``data'' has different address
     {
-        return data.size();
+        std::cout << "copy assignment"<< std::endl;
+        Widget tmp(rhs);
+        swap(*this, tmp);
+        
+        return *this;
     }
+    
+    ~Widget()
+    {
+        std::cout<<"id:"<< id << " destructor called..." << std::endl;
+        if(data != NULL)
+        {
+            delete [] data;
+            data = NULL;
+        }
+    }
+    int getId() const
+    {
+        return id;
+    }
+    int getSize() const
+    {
+        return size;
+    }
+    //....
 private:
-    vector<int>  data;
+    int *data;
+    int id;
+    int size;
 };
 
 
-
-
-int main(int argc, char * argv[])
+void doSomething()
 {
-    myType t1, t2;
-    int a[] = { 1, 3, 5};
-    int b[] = {2,4};
-    t1.setData(a, 3);
-    t2.setData(b, 2);
-    cout<<"t1:"<<endl;
-    t1.printData();
-    cout<<"t2:"<<endl;
-    t2.printData();
+    
+    std::vector<Widget>v;
+    for(int i = 0; i < 5; ++i)
+    {
+        Widget item(i);
+        v.push_back(item);
+    }
+    std::cout<<"Test case2:"<<std::endl;
+    Widget t1(15);
+    Widget t2;
+    Widget t3;
+    t2 = t1;
 
-    t1 = t1 + t2;
-    cout<<"t1 + t2:"<<endl;
-    t1.printData();
+}
+
+int main()
+{
+    doSomething();
 
     return 0;
 }    
