@@ -12,7 +12,7 @@ public:
         cout<<"Person instance constructed..."<<endl;
         num = 0;
     }
-    ~Person()
+    virtual ~Person()
     {
 
     }

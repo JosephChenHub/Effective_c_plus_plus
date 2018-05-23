@@ -1,7 +1,6 @@
 #include <iostream>
 
-///if you use virtual functions in base class, then you should declare
-///destructors virtual in polymorphic base classes
+///declare destructors virtual in polymorphic base classes
 
 class base1
 {

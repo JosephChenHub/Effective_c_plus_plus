@@ -4,7 +4,7 @@
 using namespace std;
 
 
-class Base
+class Base //abstract class
 {
 public:
     Base()
